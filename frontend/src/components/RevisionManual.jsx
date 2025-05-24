@@ -18,12 +18,12 @@ class EventoSismico {
     }
 
     static esAutoDetectado(){
-        let eventos = []
-        let estado = this.estadoActual
-        if(estado.esAutoDetectado()){
-            eventos.push(this);
-        }
-        return eventos;
+        
+        return eventos.filter(
+            evento =>
+                evento.estadoActual &&
+                evento.estadoActual.esAutoDetectado()
+        );
     }
 
     obtenerDatosEvento(){
@@ -61,40 +61,84 @@ class EventoSismico {
 
 }
 
+class ClasificacionSismo {
+    constructor(kmProfundidadDesde, kmProfundidadHasta, nombre){
+        this.kmProfundidadDesde = kmProfundidadDesde,
+        this.kmProfundidadHasta = kmProfundidadHasta,
+        this.nombre = nombre
+    }
+
+    getNombre(){
+        return this.nombre;
+    }
+}
+
+class OrigenDeGeneracion {
+    constructor(descripcion, nombre){
+        this.descripcion = descripcion,
+        this.nombre = nombre
+    }
+
+    getNombre(){
+        return this.nombre;
+    }
+}
+
+
+class AlcanceSismo{
+    constructor(descripcion, nombre){
+        this.descripcion = descripcion,
+        this.nombre = nombre
+    }
+
+    getNombre(){
+        return this.nombre;
+    }
+}
+
 
 class Estado {
-    new(nombre,ambito){
-        this.nombre = nombre,
-        this.ambito = ambito
+    constructor(nombre, ambito) {
+        this.nombre = nombre;
+        this.ambito = ambito;
+    }
+
+    esAutoDetectado() {
+        return this.nombre === "AutoDetectado";
+    }
+
+    esAmbitoEvSismico() {
+        return this.ambito === "EvSismico";
+    }
+
+    esBloqEnRevision() {
+        return this.nombre === "BloqEnRevision";
+    }
+
+    transicionaDeBloqEnRev() {
+        return this.nombre === "BloqEnRevision";
+    }
+
+    getNombre() {
+        return this.nombre;
     }
 }
+
 class CambioEstado {
-    new(fechaHoraInicio,fechaHoraFin){
-        this.fechaHoraInicio = fechaHoraInicio
-        this.fechaHoraFin = fechaHoraFin
+    constructor(fechaHoraInicio, fechaHoraFin) {
+        this.fechaHoraInicio = fechaHoraInicio;
+        this.fechaHoraFin = fechaHoraFin;
+    }
+
+    sosActual() {
+        return this.fechaHoraFin == null;
+    }
+
+    setFechaHoraFin(fecha) {
+        this.fechaHoraFin = fecha;
     }
 }
 
-class Sismografo {
-    new(fechaAdquisicion, identificadorSismografo, nroSerie) {
-        this.fechaAdquisicion = fechaAdquisicion,
-        this.identificadorSismografo = identificadorSismografo,
-        this.nroSerie = nroSerie
-    }
-}
-
-
-class EstacionSismologica {
-    new(codigoEstacion, documentoCertificadoAdq, fechaSolicitudCertificacion, latitud, longitud, nombre, nroCertificacionAdquisicion){
-        this.codigoEstacion = codigoEstacion,
-        this.documentoCertificadoAdq = documentoCertificadoAdq, 
-        this.fechaSolucitudCertificacion = fechaSolicitudCerticacion, 
-        this.latitud = latitud, 
-        this.longitud = longitud,
-        this.nombre = nombre,
-        this.nroCertificacionAdquisicion = nroCertificacionAdquisicion
-    }
-}
 
 class Sesion {
   constructor(fechaHoraAlta, fechaHoraBaja, usuario) {
@@ -133,10 +177,95 @@ class Responsable {
     }
 }
 
-class GestionRevision {
-    new(eventoSismico, datosSismico) {
-        this.eventoSismico = eventoSismico,
-        this.datosSismico
+class TipoDeDato {
+    constructor(denominacion, nombreUnidadMedida, valorUmbral) {
+        this.denominacion = denominacion;
+        this.nombreUnidadMedida = nombreUnidadMedida;
+        this.valorUmbral = valorUmbral;
+    }
+
+    getDenominacion() {
+        return this.denominacion;
+    }
+
+    obtenerDatos() {
+        return {
+            denominacion: this.getDenominacion(),
+            nombreUnidadMedida: this.nombreUnidadMedida,
+            valorUmbral: this.valorUmbral
+        };
+    }
+}
+
+class DetalleMuestraSismica {
+    constructor(valor, tipoDeDato) {
+        this.valor = valor;
+        this.tipoDeDato = tipoDeDato;
+    }
+
+    getDatos() {
+        return {
+            valor: this.valor,
+            denominacion: this.tipoDeDato.getDenominacion()
+        };
+    }
+}
+
+class MuestraSismica {
+    constructor(fechaHoraMuestra, detallesMuestraSismica = []) {
+        this.fechaHoraMuestra = fechaHoraMuestra;
+        this.detallesMuestraSismica = detallesMuestraSismica; // array de DetalleMuestraSismica
+    }
+
+    obtenerDetalleMuestra() {
+        return this.detallesMuestraSismica.map(detalle => detalle.getDatos());
+    }
+
+    obtenerDatos() {
+        return {
+            fechaHoraMuestra: this.fechaHoraMuestra,
+            detalles: this.obtenerDetalleMuestra()
+        };
+    }
+}
+
+class SerieTemporal {
+    constructor(muestrasSismicas = []) {
+        this.muestrasSismicas = muestrasSismicas; // array de MuestraSismica
+    }
+
+    obtenerMuestras() {
+        return this.muestrasSismicas.map(muestra => muestra.obtenerDatos());
+    }
+}
+
+
+class EstacionSismologica {
+    constructor(codigoEstacion, documentoCertificadoAdq, fechaSolicitudCertificacion, latitud, longitud, nombre, nroCertificacionAdquisicion) {
+        this.codigoEstacion = codigoEstacion;
+        this.documentoCertificadoAdq = documentoCertificadoAdq;
+        this.fechaSolicitudCertificacion = fechaSolicitudCertificacion;
+        this.latitud = latitud;
+        this.longitud = longitud;
+        this.nombre = nombre;
+        this.nroCertificacionAdquisicion = nroCertificacionAdquisicion;
+
+    }
+
+    obtenerCodigoEstacion() {
+        return this.codigoEstacion;
+    }
+}
+
+class Sismografo {
+    constructor(fechaAdquisicion, identificadorSismografo, nroSerie) {
+        this.fechaAdquisicion = fechaAdquisicion;
+        this.identificadorSismografo = identificadorSismografo;
+        this.nroSerie = nroSerie;
+    }
+
+    sosDeSerieTemporal() {
+        return true; 
     }
 }
 
