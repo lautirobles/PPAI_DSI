@@ -1,18 +1,37 @@
-import 
+import { eventosEjemplo } from './eventos'
 
 class GestorRevision{
     constructor(estados, estadoBloq, sesion, eventos, eventoSelec){
         this.estados = null;
         this.estadoBloq = null;
         this.sesion = null;
-        this.eventos = null;
+        this.eventos = eventosEjemplo || [];
         this.eventoSelec = null
     }
 
     buscarEventosNoRevisados(){
-        this.eventos = EventoSismico.esAutoDetectado();
-        this.eventos.map((evento)=>{
-            return evento.obtenerDatosEvento();
+        return this.eventos
+        .filter(evento => evento.esAutoDetectado())
+        .map(evento => evento.obtenerDatosEvento());
+    }
+
+    ordenarEventos(){
+        const eventosNoRevisados = gestor.buscarEventosNoRevisados();
+        return eventosNoRevisados.sort((a, b) => {
+            const fechaA = new Date(a.fechaHoraOcurrencia);
+            const fechaB = new Date(b.fechaHoraOcurrencia);
+            return fechaA - fechaB; // Ascendente
+        });
+    }
+
+    tomarSelecEvento(evento){
+        this.eventoSelec = evento;
+    }
+
+    buscarEstadoBloqEnRev(){
+        this.estadoBloq = this.estados.filter(e => {
+            e.esAmbitoEvSismico();
+            e.esBloqEnRevision();
         })
     }
 }
@@ -38,22 +57,19 @@ class EventoSismico {
         this.cambioEstado = cambioEstado
     }
 
-    static esAutoDetectado(){
-        
-        return eventos.filter(
-            evento =>
-                evento.estadoActual &&
-                evento.estadoActual.esAutoDetectado()
-        );
+    esAutoDetectado(){    
+        return this.estadoActual.getNombre() === 'AutoDetectado';
     }
 
     obtenerDatosEvento(){
-        getFechaHoraOcurrencia();
-        getLatEpi();
-        getLonEpi();
-        getLatHipo();
-        getLonHipo();
-        getValorMagnitud();
+        return {
+            fechaHoraOcurrencia: this.getFechaHoraOcurrencia(),
+            latitudEpicentro: this.getLatEpi(),
+            longitudEpicentro: this.getLonEpi(),
+            latitudHipocentro: this.getLatHipo(),
+            longitudHipocentro: this.getLonHipo(),
+            valorMagnitud: this.getValorMagnitud()
+        };
     }
 
     getFechaHoraOcurrencia(){
@@ -291,4 +307,4 @@ class Sismografo {
 }
 
 
-export { GestorEvento, EventoSismico, Estado, CambioEstado, Sismografo, EstacionSismologica, SerieTemporal, MuestraSismica, DetalleMuestraSismica, TipoDeDato, Responsable, Usuario, Sesion, AlcanceSismo, OrigenDeGeneracion, ClasificacionSismo}
+export { GestorRevision, EventoSismico, Estado, CambioEstado, Sismografo, EstacionSismologica, SerieTemporal, MuestraSismica, DetalleMuestraSismica, TipoDeDato, Responsable, Usuario, Sesion, AlcanceSismo, OrigenDeGeneracion, ClasificacionSismo}

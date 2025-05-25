@@ -14,7 +14,7 @@ import {
   AlcanceSismo,
   OrigenDeGeneracion,
   ClasificacionSismo
-} from './index';
+} from './index.jsx';
 
 
 const responsable = new Responsable("García", "juan.garcia@mail.com", "Juan", "3511234567");

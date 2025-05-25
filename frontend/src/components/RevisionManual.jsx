@@ -1,10 +1,15 @@
-
-
+import { eventosEjemplo } from '../modelos/eventos'; 
+import { GestorRevision } from '../modelos/index';
+import { useEffect, useState } from 'react';
 import React from 'react'
 
 function RevisionManual(){
+    const gestor = new GestorRevision();
+    const [eventos, setEventos] = useState([]);
 
-
+    useEffect(() => {
+        setEventos(gestor.buscarEventosNoRevisados());
+    }, []);
 
     return(
         <div className='container'>
@@ -22,7 +27,19 @@ function RevisionManual(){
                     </tr>
                 </thead>
                 <tbody>
-                    {/* Aquí irán las filas de datos */}
+                    {eventos.map((evento, idx) => (
+                        <tr key={idx}>
+                            <td>{evento.fechaHoraOcurrencia}</td>
+                            <td>{evento.latitudEpicentro}</td>
+                            <td>{evento.longitudEpicentro}</td>
+                            <td>{evento.latitudHipocentro}</td>
+                            <td>{evento.longitudHipocentro}</td>
+                            <td>{evento.valorMagnitud}</td>
+                            <td>
+                                <button className="btn btn-primary btn-sm">Revisar</button>
+                            </td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
         </div>
