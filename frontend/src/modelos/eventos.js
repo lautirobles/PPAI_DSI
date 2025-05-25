@@ -49,20 +49,24 @@ const clasificacion = new ClasificacionSismo(0, 70, "Superficial");
 const origen = new OrigenDeGeneracion("Detectado automáticamente por sensores", "Automático");
 const alcance = new AlcanceSismo("Afecta zona urbana", "Urbano");
 
-const estadoAuto = new Estado("AutoDetectado", "EvSismico");
-const estadoManual = new Estado("Manual", "EvSismico");
+const estados = [
+    new Estado("AutoDetectado", "EvSismico"),
+    new Estado("Manual", "EvSismico")
+]
 
 const cambioEstado = new CambioEstado("2024-05-25 12:30", null);
 
-export const eventosEjemplo = [
-  new EventoSismico("2024-05-25 12:40", "2024-05-25 12:30", -31.4, -64.2, -32.1, -65.1, 5.2, serieTemporal, clasificacion, 5.2, origen, alcance, estadoAuto, cambioEstado),
-  new EventoSismico("2024-05-25 13:40", "2024-05-25 13:30", -31.5, -64.3, -32.2, -65.2, 4.8, serieTemporal2, clasificacion, 4.8, origen, alcance, estadoManual, cambioEstado),
-  new EventoSismico("2024-05-25 14:40", "2024-05-25 14:30", -31.6, -64.4, -32.3, -65.3, 4.6, serieTemporal, clasificacion, 4.6, origen, alcance, estadoAuto, cambioEstado),
-  new EventoSismico("2024-05-25 15:40", "2024-05-25 15:30", -31.7, -64.5, -32.4, -65.4, 4.9, serieTemporal2, clasificacion, 4.9, origen, alcance, estadoManual, cambioEstado),
-  new EventoSismico("2024-05-25 16:40", "2024-05-25 16:30", -31.8, -64.6, -32.5, -65.5, 5.1, serieTemporal3, clasificacion, 5.1, origen, alcance, estadoAuto, cambioEstado),
-  new EventoSismico("2024-05-25 17:40", "2024-05-25 17:30", -31.9, -64.7, -32.6, -65.6, 4.7, serieTemporal, clasificacion, 4.7, origen, alcance, estadoManual, cambioEstado),
-  new EventoSismico("2024-05-25 18:40", "2024-05-25 18:30", -32.0, -64.8, -32.7, -65.7, 4.5, serieTemporal3, clasificacion, 4.5, origen, alcance, estadoAuto, cambioEstado),
-  new EventoSismico("2024-05-25 19:40", "2024-05-25 19:30", -32.1, -64.9, -32.8, -65.8, 5.0, serieTemporal2, clasificacion, 5.0, origen, alcance, estadoManual, cambioEstado),
-  new EventoSismico("2024-05-25 20:40", "2024-05-25 20:30", -32.2, -65.0, -32.9, -65.9, 4.4, serieTemporal, clasificacion, 4.4, origen, alcance, estadoAuto, cambioEstado),
-  new EventoSismico("2024-05-25 21:40", "2024-05-25 21:30", -32.3, -65.1, -33.0, -66.0, 4.3, serieTemporal3, clasificacion, 4.3, origen, alcance, estadoManual, cambioEstado),
+const eventosEjemplo = [
+  new EventoSismico("2024-05-25 12:40", "2024-05-25 12:30", -31.4, -64.2, -32.1, -65.1, 5.2, serieTemporal, clasificacion, 5.2, origen, alcance, estados[0], cambioEstado),
+  new EventoSismico("2024-05-25 13:40", "2024-05-25 13:30", -31.5, -64.3, -32.2, -65.2, 4.8, serieTemporal2, clasificacion, 4.8, origen, alcance, estados[1], cambioEstado),
+  new EventoSismico("2024-05-25 14:40", "2024-05-25 14:30", -31.6, -64.4, -32.3, -65.3, 4.6, serieTemporal, clasificacion, 4.6, origen, alcance, estados[0], cambioEstado),
+  new EventoSismico("2024-05-25 15:40", "2024-05-25 15:30", -31.7, -64.5, -32.4, -65.4, 4.9, serieTemporal2, clasificacion, 4.9, origen, alcance, estados[1], cambioEstado),
+  new EventoSismico("2024-05-25 16:40", "2024-05-25 16:30", -31.8, -64.6, -32.5, -65.5, 5.1, serieTemporal3, clasificacion, 5.1, origen, alcance, estados[0], cambioEstado),
+  new EventoSismico("2024-05-25 17:40", "2024-05-25 17:30", -31.9, -64.7, -32.6, -65.6, 4.7, serieTemporal, clasificacion, 4.7, origen, alcance, estados[1], cambioEstado),
+  new EventoSismico("2024-05-25 18:40", "2024-05-25 18:30", -32.0, -64.8, -32.7, -65.7, 4.5, serieTemporal3, clasificacion, 4.5, origen, alcance, estados[0], cambioEstado),
+  new EventoSismico("2024-05-25 19:40", "2024-05-25 19:30", -32.1, -64.9, -32.8, -65.8, 5.0, serieTemporal2, clasificacion, 5.0, origen, alcance, estados[1], cambioEstado),
+  new EventoSismico("2024-05-25 20:40", "2024-05-25 20:30", -32.2, -65.0, -32.9, -65.9, 4.4, serieTemporal, clasificacion, 4.4, origen, alcance, estados[0], cambioEstado),
+  new EventoSismico("2024-05-25 21:40", "2024-05-25 21:30", -32.3, -65.1, -33.0, -66.0, 4.3, serieTemporal3, clasificacion, 4.3, origen, alcance, estados[1], cambioEstado),
 ];
+
+export { estados, eventosEjemplo }

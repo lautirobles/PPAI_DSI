@@ -1,22 +1,24 @@
-import { eventosEjemplo } from './eventos'
 
+//  FALTA LA CONSISTENCIA EN EL DIAG DE CLASES
 class GestorRevision{
-    constructor(estados, estadoBloq, sesion, eventos, eventoSelec){
-        this.estados = null;
+    constructor(estados, eventos){
+        this.estados = estados;
         this.estadoBloq = null;
         this.sesion = null;
-        this.eventos = eventosEjemplo || [];
-        this.eventoSelec = null
+        this.eventos = eventos;
+        this.eventoSelec = null;
+        this.fechaHoraAct = null;
+         this.datosSismicosEventoSelec = null;
     }
 
     buscarEventosNoRevisados(){
-        return this.eventos
+        let eventosNoRev = this.eventos
         .filter(evento => evento.esAutoDetectado())
         .map(evento => evento.obtenerDatosEvento());
+        return this.ordenarEventos(eventosNoRev)
     }
 
-    ordenarEventos(){
-        const eventosNoRevisados = gestor.buscarEventosNoRevisados();
+    ordenarEventos(eventosNoRevisados){
         return eventosNoRevisados.sort((a, b) => {
             const fechaA = new Date(a.fechaHoraOcurrencia);
             const fechaB = new Date(b.fechaHoraOcurrencia);
@@ -28,12 +30,49 @@ class GestorRevision{
         this.eventoSelec = evento;
     }
 
+    obtenerFechaYHoraActual() {
+        // Devuelve la fecha y hora actual del sistema según el reloj de la computadora
+        this.fechaHoraAct = new Date();
+    }
+
+    bloquearEvento(){
+        this.buscarEstadoBloqEnRev();
+        this.obtenerFechaYHoraActual();
+        this.eventoSelec.bloquearEvSismico(this.estadoBloq, this.fechaHoraAct);
+    }
+
     buscarEstadoBloqEnRev(){
         this.estadoBloq = this.estados.filter(e => {
             e.esAmbitoEvSismico();
             e.esBloqEnRevision();
         })
     }
+
+    buscarDatosSismicos() {
+        // Llama a buscarDatosSismicos de EventoSismico usando el evento seleccionado
+        if (!this.eventoSelec) {
+            throw new Error("No hay evento seleccionado");
+        }
+        // Obtiene los datos sismicos del evento seleccionado
+        this.datosSismicosEventoSelec = this.eventoSelec.buscarDatosSismicos();
+
+        // Formatea las muestras para que sean legibles
+        const muestrasLegibles = (this.datosSismicosEventoSelec.muestras || []).map(muestra => {
+            return {
+                fechaHoraMuestra: muestra.fechaHoraMuestra,
+                detalles: (muestra.detalles || []).map(detalle => 
+                    `${detalle.denominacion}: ${detalle.valor}`
+                ).join(', ')
+            };
+        });
+
+        // Devuelve los datos sismicos con las muestras legibles
+        return {
+            ...this.datosSismicosEventoSelec,
+            muestras: muestrasLegibles
+        };
+    }
+   
 }
 
 
@@ -95,6 +134,60 @@ class EventoSismico {
     getValorMagnitud(){
         return this.valorMagnitud;
     }
+
+    bloquearEvSismico(estadoBloq, fecha){
+        this.setEstadoActual(estadoBloq);
+        this.buscarCEAct(fecha);
+        this.crearCE(estadoBloq, fecha);
+
+    }
+    
+    setEstadoActual(estado){
+        this.estadoActual = estado;
+    }
+
+    buscarCEAct(fechaFin){
+        // busca si cambio estado es un array para ver si hay que recorrer o no
+        if (Array.isArray(this.cambioEstado)) {
+            const ceActual = this.cambioEstado.find(ce => {ce.sosActual()});
+            if (ceActual) {
+                ceActual.setFechaHoraFin(fechaFin);
+            }
+            return ceActual || null;
+        }else if(this.cambioEstado && this.cambioEstado.sosActual){
+            if (this.cambioEstado.sosActual()) {
+                this.cambioEstado.setFechaHoraFin(fechaFin);
+                return this.cambioEstado;
+            }
+            return null;
+        }
+        return null;
+    }
+
+    crearCE(estado, fecha){
+        const nuevoEstado = new CambioEstado(fecha, null, estado);
+        // Si el evento ya tiene un array de cambioEstado, lo agregás:
+        if (Array.isArray(this.cambioEstado)) {
+            evento.cambioEstado.push(nuevoEstado);
+        } else if (this.cambioEstado) {
+            // Si solo tiene uno, lo convertís en array
+            this.cambioEstado = [this.cambioEstado, nuevoEstado];
+        } else {
+            // Si no tiene ninguno, creás el array
+            this.cambioEstado = [nuevoEstado];
+        }
+    }
+
+    buscarDatosSismicos() {
+        return {
+            muestras: this.serieTemporal ? this.serieTemporal.obtenerMuestras() : [],
+            alcanceNombre: this.alcance?.getNombre() || null,
+            origenNombre: this.origenGeneracion?.getNombre() || null,
+            clasificacionNombre: this.clasificacion?.getNombre() || null
+        };
+    }
+
+
 
 }
 
@@ -162,9 +255,10 @@ class Estado {
 }
 
 class CambioEstado {
-    constructor(fechaHoraInicio, fechaHoraFin) {
+    constructor(fechaHoraInicio, fechaHoraFin, estado) {
         this.fechaHoraInicio = fechaHoraInicio;
         this.fechaHoraFin = fechaHoraFin;
+        this.estado = estado;
     }
 
     sosActual() {
