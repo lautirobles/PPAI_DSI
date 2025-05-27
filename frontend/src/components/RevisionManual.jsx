@@ -1,11 +1,12 @@
-import { estados, eventosEjemplo } from '../modelos/eventos'; 
+import { estados, eventosEjemplo, sesion } from '../modelos/eventos'; 
 import { GestorRevision } from '../modelos/index';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import React from 'react'
 import VisualizarMapa from './Visualizar';
 
     function RevisionManual(){
-        const gestor = new GestorRevision(estados, eventosEjemplo);
+        const gestorRef = useRef(new GestorRevision(estados, eventosEjemplo, sesion));
+        const gestor = gestorRef.current;
         const [eventos, setEventos] = useState([]);
         const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
         const [mostrarModal, setMostrarModal] = useState(false);
@@ -13,16 +14,25 @@ import VisualizarMapa from './Visualizar';
         const handleRevisar = (evento) => {
             gestor.tomarSelecEvento(evento);
             gestor.buscarEstadoBloqEnRev();
-            gestor.habilitarOpcionVisualizarMapa() ? setMostrarModal(true) : null;
             if (gestor.habilitarOpcionVisualizarMapa()) {
-                setEventoSeleccionado(evento)
+                setEventoSeleccionado(evento);
                 setMostrarModal(true);
             }
+        };
+
+        const handleEstadoActualizado = () => {
+            setEventos(gestor.buscarEventosNoRevisados());
+            setMostrarModal(false);
         };
 
         useEffect(() => {
             setEventos(gestor.buscarEventosNoRevisados());
         }, []);
+
+        const handleFinCU = () => {
+            gestor.finCU();
+            setMostrarFinCU(true);
+        }
 
         return(
             <div className='container'>
@@ -66,10 +76,13 @@ import VisualizarMapa from './Visualizar';
                     evento={eventoSeleccionado}
                     show={mostrarModal}
                     onHide={() => setMostrarModal(false)}
+                    gestor={gestor}
+                    onEstadoActualizado={handleEstadoActualizado}
+                    finCU={handleFinCU}
                 />
 
             </div>
-        );
+        );  
     }
 
     export { RevisionManual };

@@ -1,14 +1,18 @@
 
 //  FALTA LA CONSISTENCIA EN EL DIAG DE CLASES
 class GestorRevision{
-    constructor(estados, eventos){
+    constructor(estados, eventos, sesion){
         this.estados = estados;
         this.estadoBloq = null;
-        this.sesion = null;
+        this.sesion = sesion;
         this.eventos = eventos;
         this.eventoSelec = null;
         this.fechaHoraAct = null;
-         this.datosSismicosEventoSelec = null;
+        this.datosSismicosEventoSelec = null;
+        this.opciones = ['Confirmar', 'Rechazar', 'Revision Experto'];
+        this.modifSeleccionada = null;
+        this.accionSeleccionada = null;
+        this.responsable = null;
     }
 
     buscarEventosNoRevisados(){
@@ -36,7 +40,7 @@ class GestorRevision{
     }
 
     buscarEstadoBloqEnRev(){
-        this.estadoBloq = this.estados.filter(e => {
+        this.estadoBloq = this.estados.find(e => {
             e.esAmbitoEvSismico();
             e.esBloqEnRevision();
         })
@@ -80,8 +84,68 @@ class GestorRevision{
         return true;
     }
 
-    
-   
+    habilitarModificacionEvento(){
+        return true;
+    }
+
+    tomarModificacion(modif){
+        if(modif){
+            this.modifSeleccionada = true;
+        }else{
+            this.modifSeleccionada = false;
+        }
+    }
+
+
+    crearOpciones(){
+        return this.opciones;
+    }
+
+    // FALTA BUSCAR EL ESTADO SELECCIONADO 
+
+    tomarAccion(opcion){
+        this.opSeleccionada = opcion;
+    }
+
+    validarDatosEv() {
+        const alcance = this.eventoSelec.alcance.getNombre();
+        const origen = this.eventoSelec.origenGeneracion.getNombre();
+        const accion = this.accionSeleccionada;
+
+        if (!this.eventoSelec) return false;
+        const tieneMagnitud = this.eventoSelec.valorMagnitud !== undefined && this.eventoSelec.valorMagnitud !== null && this.eventoSelec.valorMagnitud !== '';
+        const tieneAlcance = alcance !== undefined && alcance !== null && alcance !== '';
+        const tieneOrigen = origen !== undefined && origen !== null && origen !== '';
+        const accionValida = accion !== undefined && accion !== null && accion !== '';
+
+        return tieneMagnitud && tieneAlcance && tieneOrigen && accionValida;
+    }
+
+    buscarResponsable(){
+        this.responsable = this.sesion.conocerUsuario();
+    }
+
+    actualizarEstado(opcion){
+        let fecha = this.fechaHoraAct;
+        console.log(`el evento selec es: ${this.eventoSelec}`)
+        if(opcion === 'Confirmar'){
+            this.eventoSelec.confirmarEvento(opcion, fecha);
+        }else if (opcion === 'Rechazar'){
+            this.eventoSelec.rechazarEvento(opcion, fecha);
+        }else if (opcion === 'Solicitar revision a experto'){
+            this.eventoSelec.revisionExperto(opcion, fecha);
+        }
+    }
+
+
+    finCU() {
+        // Aquí podrías limpiar datos, resetear estados, etc.
+        // Por ejemplo:
+        this.eventoSelec = null;
+        this.datosSismicosEventoSelec = null;
+        // Retorna true para indicar que terminó el CU
+        return true;
+    }
 }
 
 
@@ -155,7 +219,7 @@ class EventoSismico {
     }
     
     setEstadoActual(estado){
-        this.estadoActual = estado;
+        this.estadoActual = new Estado(estado);
     }
 
     buscarCEAct(fechaFin){
@@ -199,7 +263,28 @@ class EventoSismico {
         };
     }
 
+    rechazarEvento(estadoRechazado, fecha){
+        this.setEstadoActual(estadoRechazado);
+        this.buscarCEAct(fecha);
+        this.crearCE(estadoRechazado, fecha);
+        console.log(`El estado actual es ${this.estadoActual}`);
+    }
 
+    // FLUJO ALTERNATIVO 1
+    confirmarEvento(estadoConfirmado, fecha){
+        this.setEstadoActual(estadoConfirmado);
+        this.buscarCEAct(fecha);
+        this.crearCE(estadoConfirmado, fecha);
+        console.log(`El estado actual es ${this.estadoActual}`);
+    }
+
+    // FLUJO ALTERNATIVO 2
+    revisionExperto(estadoRevision, fecha){
+        this.setEstadoActual(estadoRevision);
+        this.buscarCEAct(fecha);
+        this.crearCE(estadoRevision, fecha);
+        console.log(`El estado actual es ${this.estadoActual}`);
+    }
 
 }
 
@@ -290,7 +375,7 @@ class Sesion {
     this.usuario = usuario;
   }
   conocerUsuario() {
-    return this.usuario;
+    return this.usuario.conocerResponsable();
   }
 }
 
@@ -303,7 +388,7 @@ class Usuario {
     }
 
     conocerResponsable() {
-        return this.responsable;
+        return this.responsable.getNombre();
     }
 }
 

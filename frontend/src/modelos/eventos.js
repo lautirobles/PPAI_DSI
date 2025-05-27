@@ -51,7 +51,9 @@ const alcance = new AlcanceSismo("Afecta zona urbana", "Local");
 
 const estados = [
     new Estado("AutoDetectado", "EvSismico"),
-    new Estado("Manual", "EvSismico")
+    new Estado("BloqEnRevision", "EvSismico"),
+    new Estado("Rechazado", "EvSismico"),
+    new Estado("Solicitar revision a experto", "EvSismico")
 ]
 
 const cambioEstado = new CambioEstado("2024-05-25 12:30", null);
@@ -69,4 +71,4 @@ const eventosEjemplo = [
   new EventoSismico("2024-05-25 21:40", "2024-05-25 21:30", -32.3, -65.1, -33.0, -66.0, 4.3, serieTemporal3, clasificacion, 4.3, origen, alcance, estados[1], cambioEstado),
 ];
 
-export { estados, eventosEjemplo }
+export { estados, eventosEjemplo, sesion }

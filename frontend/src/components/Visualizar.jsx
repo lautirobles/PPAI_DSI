@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
-function VisualizarMapa({ evento, show, onHide }) {
+
+function VisualizarMapa({ evento, show, onHide, gestor, onEstadoActualizado, handleFinCU }) {
   const [showSecondModal, setShowSecondModal] = useState(false);
   const [showThirdModal, setShowThirdModal] = useState(false);
 
@@ -10,6 +11,11 @@ function VisualizarMapa({ evento, show, onHide }) {
   const [magnitud, setMagnitud] = useState('');
   const [alcance, setAlcance] = useState('');
   const [origen, setOrigen] = useState('');
+  const [mostrarFinCU, setMostrarFinCU] = useState(false);
+
+
+  // Cargar datos del gestor
+  const opciones = gestor.crearOpciones();
 
   // Cargar datos del evento al iniciar
   useEffect(() => {
@@ -21,21 +27,20 @@ function VisualizarMapa({ evento, show, onHide }) {
   }, [evento]);
 
   // Controladores de modales
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleClose = () => onHide();
 
   const handleSecondClose = () => setShowSecondModal(false);
 
-  // FALTA LA LOGICA ACA PARA QUE VAYA AL METODO DEL GESTOR HABILITARMODIFICACIONEVENTO         !!!!!!!!!!!!!!!
+  
   const handleNoClick = () => {
     onHide();
-    // tomarSolicitud(setShow())
-    setShowSecondModal(true); // abrir segundo modal
+    if(gestor.habilitarModificacionEvento()) setShowSecondModal(true); 
   };
 
   // Cuando rechazas la modificación (cerrar el segundo modal)
-  const handleRejectModification = () => {
+  const handleModificacion = (bool) => {
     setShowSecondModal(false);
+    gestor.tomarModificacion(bool);
     setShowThirdModal(true); // abrir tercer modal con opciones
   };
 
@@ -44,9 +49,12 @@ function VisualizarMapa({ evento, show, onHide }) {
 
   // Manejar selección de opción en tercer modal
   const handleOptionSelect = (option) => {
+    gestor.obtenerFechaYHoraActual();
+    gestor.actualizarEstado(option);
+    onEstadoActualizado();
     console.log(`Opción seleccionada: ${option}`);
-    // Aquí puedes agregar lógica para cada opción (confirmar, rechazar, solicitar revisión)
     setShowThirdModal(false);
+    setMostrarFinCU(true);
   };
 
   if(!evento) return null;
@@ -55,7 +63,7 @@ function VisualizarMapa({ evento, show, onHide }) {
     <>
 
       {/* Primer modal */}
-      <Modal show={show} onHide={onHide}>
+      <Modal show={show} onHide={onHide} >
         <Modal.Header closeButton>
           <Modal.Title>Datos del evento sismico seleccionado</Modal.Title>
         </Modal.Header>
@@ -138,10 +146,10 @@ function VisualizarMapa({ evento, show, onHide }) {
           </form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleRejectModification}>
+          <Button variant="secondary" onClick={() => handleModificacion(false)}>
             Rechazar
           </Button>
-          <Button variant="primary" onClick={handleSecondClose}>
+          <Button variant="primary" onClick={() => handleModificacion(true)}>
             Modificar
           </Button>
         </Modal.Footer>
@@ -155,20 +163,34 @@ function VisualizarMapa({ evento, show, onHide }) {
         <Modal.Body>
           <p>Seleccione una acción para el evento.</p>
           <div className="d-grid gap-2">
-            <Button variant="success" onClick={() => handleOptionSelect('Confirmar evento')}>
-              Confirmar evento
-            </Button>
-            <Button variant="danger" onClick={() => handleOptionSelect('Rechazar evento')}>
-              Rechazar evento
-            </Button>
-            <Button variant="warning" onClick={() => handleOptionSelect('Solicitar revisión a experto')}>
-              Solicitar revisión a experto
-            </Button>
+            {opciones.map((op, idx) =>(
+              <Button 
+                key={idx}
+                variant="outline-primary"
+                onClick={() => handleOptionSelect(op)}
+              >{op}</Button>
+            ))}
+
           </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleThirdClose}>
             Cancelar
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Modal Fin CU */}
+      <Modal show={mostrarFinCU} onHide={() => setMostrarFinCU(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Registrar resultado de revision manual</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Revision manual registrada correctamente</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={() => setMostrarFinCU(false)}>
+                        Cerrar
           </Button>
         </Modal.Footer>
       </Modal>
