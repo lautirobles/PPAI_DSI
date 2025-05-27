@@ -46,8 +46,8 @@ const estacion = new EstacionSismologica("EST001", "DOC123", "2024-05-20", -31.4
 const sismografo = new Sismografo("2022-01-01", "SISMO001", "SN12345");
 
 const clasificacion = new ClasificacionSismo(0, 70, "Superficial");
-const origen = new OrigenDeGeneracion("Detectado automáticamente por sensores", "Automático");
-const alcance = new AlcanceSismo("Afecta zona urbana", "Urbano");
+const origen = new OrigenDeGeneracion("Generado en un volcan", "Volcánico");
+const alcance = new AlcanceSismo("Afecta zona urbana", "Local");
 
 const estados = [
     new Estado("AutoDetectado", "EvSismico"),

@@ -79,6 +79,8 @@ class GestorRevision{
     habilitarOpcionVisualizarMapa(){
         return true;
     }
+
+    
    
 }
 

@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
-function VisualizarMapa({ evento }) {
-  const [show, setShow] = useState(true);
+function VisualizarMapa({ evento, show, onHide }) {
   const [showSecondModal, setShowSecondModal] = useState(false);
   const [showThirdModal, setShowThirdModal] = useState(false);
 
@@ -16,8 +15,8 @@ function VisualizarMapa({ evento }) {
   useEffect(() => {
     if (evento) {
       setMagnitud(evento.valorMagnitud || '');
-      setAlcance(evento.alcance || '');
-      setOrigen(evento.origen || '');
+      setAlcance(evento.alcance.getNombre() || '');
+      setOrigen(evento.origenGeneracion.getNombre() || '');
     }
   }, [evento]);
 
@@ -29,7 +28,7 @@ function VisualizarMapa({ evento }) {
 
   // FALTA LA LOGICA ACA PARA QUE VAYA AL METODO DEL GESTOR HABILITARMODIFICACIONEVENTO         !!!!!!!!!!!!!!!
   const handleNoClick = () => {
-    setShow(false); // cerrar primer modal
+    onHide();
     // tomarSolicitud(setShow())
     setShowSecondModal(true); // abrir segundo modal
   };
@@ -56,7 +55,7 @@ function VisualizarMapa({ evento }) {
     <>
 
       {/* Primer modal */}
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={show} onHide={onHide}>
         <Modal.Header closeButton>
           <Modal.Title>Datos del evento sismico seleccionado</Modal.Title>
         </Modal.Header>
