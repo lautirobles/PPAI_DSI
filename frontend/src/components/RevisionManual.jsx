@@ -7,6 +7,18 @@ import VisualizarMapa from './Visualizar';
     function RevisionManual(){
         const gestor = new GestorRevision(estados, eventosEjemplo);
         const [eventos, setEventos] = useState([]);
+        const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
+        const [mostrarModal, setMostrarModal] = useState(false);
+
+        const handleRevisar = (evento) => {
+            gestor.tomarSelecEvento(evento);
+            gestor.buscarEstadoBloqEnRev();
+            gestor.habilitarOpcionVisualizarMapa() ? setMostrarModal(true) : null;
+            if (gestor.habilitarOpcionVisualizarMapa()) {
+                setEventoSeleccionado(evento)
+                setMostrarModal(true);
+            }
+        };
 
         useEffect(() => {
             setEventos(gestor.buscarEventosNoRevisados());
@@ -37,14 +49,25 @@ import VisualizarMapa from './Visualizar';
                                 <td>{evento.longitudHipocentro}</td>
                                 <td>{evento.valorMagnitud}</td>
                                 <td>
-                                    {/* { <button className="btn btn-primary btn-sm">Revisar</button> } */}
-                                    <VisualizarMapa evento={evento}/>
+                                    { <button 
+                                    className="btn btn-primary btn-sm"
+                                    onClick={()=> handleRevisar(evento)}>
+                                        Revisar
+                                    </button> }
+                                    {/* <VisualizarMapa evento={evento}/> */}
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                     
                 </table>
+                
+                <VisualizarMapa
+                    evento={eventoSeleccionado}
+                    show={mostrarModal}
+                    onHide={() => setMostrarModal(false)}
+                />
+
             </div>
         );
     }

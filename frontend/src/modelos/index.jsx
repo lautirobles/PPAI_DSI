@@ -14,7 +14,7 @@ class GestorRevision{
     buscarEventosNoRevisados(){
         let eventosNoRev = this.eventos
         .filter(evento => evento.esAutoDetectado())
-        .map(evento => evento.obtenerDatosEvento());
+        // .map(evento => evento.obtenerDatosEvento());
         return this.ordenarEventos(eventosNoRev)
     }
 
@@ -35,18 +35,21 @@ class GestorRevision{
         this.fechaHoraAct = new Date();
     }
 
-    bloquearEvento(){
-        this.buscarEstadoBloqEnRev();
-        this.obtenerFechaYHoraActual();
-        this.eventoSelec.bloquearEvSismico(this.estadoBloq, this.fechaHoraAct);
-    }
-
     buscarEstadoBloqEnRev(){
         this.estadoBloq = this.estados.filter(e => {
             e.esAmbitoEvSismico();
             e.esBloqEnRevision();
         })
+        this.bloquearEvento();
     }
+
+
+    bloquearEvento(){
+        this.obtenerFechaYHoraActual();
+        this.eventoSelec.bloquearEvSismico(this.estadoBloq, this.fechaHoraAct);
+        this.buscarDatosSismicos();
+    }
+
 
     buscarDatosSismicos() {
         // Llama a buscarDatosSismicos de EventoSismico usando el evento seleccionado
@@ -71,6 +74,10 @@ class GestorRevision{
             ...this.datosSismicosEventoSelec,
             muestras: muestrasLegibles
         };
+    }
+
+    habilitarOpcionVisualizarMapa(){
+        return true;
     }
    
 }
@@ -107,7 +114,10 @@ class EventoSismico {
             longitudEpicentro: this.getLonEpi(),
             latitudHipocentro: this.getLatHipo(),
             longitudHipocentro: this.getLonHipo(),
-            valorMagnitud: this.getValorMagnitud()
+            valorMagnitud: this.getValorMagnitud(),
+            alcance: this.alcance,
+            clasificacion: this.clasificacion,
+            origenGeneracion: this.origenGeneracion
         };
     }
 
@@ -168,7 +178,7 @@ class EventoSismico {
         const nuevoEstado = new CambioEstado(fecha, null, estado);
         // Si el evento ya tiene un array de cambioEstado, lo agregás:
         if (Array.isArray(this.cambioEstado)) {
-            evento.cambioEstado.push(nuevoEstado);
+            this.cambioEstado.push(nuevoEstado);
         } else if (this.cambioEstado) {
             // Si solo tiene uno, lo convertís en array
             this.cambioEstado = [this.cambioEstado, nuevoEstado];

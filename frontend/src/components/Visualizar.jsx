@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
 function VisualizarMapa({ evento }) {
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(true);
   const [showSecondModal, setShowSecondModal] = useState(false);
   const [showThirdModal, setShowThirdModal] = useState(false);
 
@@ -27,6 +27,7 @@ function VisualizarMapa({ evento }) {
 
   const handleSecondClose = () => setShowSecondModal(false);
 
+  // FALTA LA LOGICA ACA PARA QUE VAYA AL METODO DEL GESTOR HABILITARMODIFICACIONEVENTO         !!!!!!!!!!!!!!!
   const handleNoClick = () => {
     setShow(false); // cerrar primer modal
     // tomarSolicitud(setShow())
@@ -49,19 +50,26 @@ function VisualizarMapa({ evento }) {
     setShowThirdModal(false);
   };
 
+  if(!evento) return null;
+
   return (
     <>
-      <Button variant="primary" onClick={handleShow}>
-        Revisar
-      </Button>
 
       {/* Primer modal */}
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>¿Desea visualizar el mapa del evento con magnitud {evento.valorMagnitud}?</Modal.Title>
+          <Modal.Title>Datos del evento sismico seleccionado</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Visualizar en un mapa el evento sísmico y las estaciones sismológicas involucradas.
+          <div>
+            <p>Alcance: {evento.alcance.getNombre()}</p>
+            <p>Clasificacion: {evento.clasificacion.getNombre()}</p>
+            <p>Origen: {evento.origenGeneracion.getNombre()}</p>
+          </div>
+          <hr />
+          <div>
+            <h5>Desea visualizar en un mapa el evento sísmico y las estaciones sismológicas involucradas?</h5>
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="danger" onClick={handleNoClick}>
