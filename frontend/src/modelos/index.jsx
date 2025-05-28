@@ -18,12 +18,12 @@ class GestorRevision{
     buscarEventosNoRevisados(){
         let eventosNoRev = this.eventos
         .filter(evento => evento.esAutoDetectado())
-        // .map(evento => evento.obtenerDatosEvento());
-        return this.ordenarEventos(eventosNoRev)
+        .map(evento => evento.obtenerDatosEvento());
+        return this.ordenarEventos(eventosNoRev);
     }
 
     ordenarEventos(eventosNoRevisados){
-        return eventosNoRevisados.sort((a, b) => {
+        return [...eventosNoRevisados].sort((a, b) => {
             const fechaA = new Date(a.fechaHoraOcurrencia);
             const fechaB = new Date(b.fechaHoraOcurrencia);
             return fechaA - fechaB; // Ascendente
@@ -175,6 +175,7 @@ class EventoSismico {
 
     obtenerDatosEvento(){
         return {
+            id: this.fechaHoraOcurrencia,
             fechaHoraOcurrencia: this.getFechaHoraOcurrencia(),
             latitudEpicentro: this.getLatEpi(),
             longitudEpicentro: this.getLonEpi(),

@@ -11,11 +11,14 @@ import VisualizarMapa from './Visualizar';
         const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
         const [mostrarModal, setMostrarModal] = useState(false);
 
-        const handleRevisar = (evento) => {
-            gestor.tomarSelecEvento(evento);
+        const handleRevisar = (eventoPlano) => {
+            const eventoInstancia = gestor.eventos.find(
+                ev => ev.fechaHoraOcurrencia === eventoPlano.fechaHoraOcurrencia
+            );
+            gestor.tomarSelecEvento(eventoInstancia);
             gestor.buscarEstadoBloqEnRev();
             if (gestor.habilitarOpcionVisualizarMapa()) {
-                setEventoSeleccionado(evento);
+                setEventoSeleccionado(eventoInstancia);
                 setMostrarModal(true);
             }
         };
