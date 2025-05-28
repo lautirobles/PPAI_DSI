@@ -107,6 +107,14 @@ class GestorRevision{
         this.opSeleccionada = opcion;
     }
 
+    // falta en diagramas
+    buscarOPSeleccionada(op){
+        this.accionSeleccionada = this.estados.find(e => {
+            e.esAmbitoEvSismico();
+            e.esOpcionSeleccionada(op);
+        })
+    }
+
     validarDatosEv() {
         const alcance = this.eventoSelec.alcance.getNombre();
         const origen = this.eventoSelec.origenGeneracion.getNombre();
@@ -256,12 +264,9 @@ class EventoSismico {
     }
 
     buscarDatosSismicos() {
-        return {
-            muestras: this.serieTemporal ? this.serieTemporal.obtenerMuestras() : [],
-            alcanceNombre: this.alcance?.getNombre() || null,
-            origenNombre: this.origenGeneracion?.getNombre() || null,
-            clasificacionNombre: this.clasificacion?.getNombre() || null
-        };
+        return this.serieTemporal
+        ? this.serieTemporal.obtenerMuestras()
+        : { muestras: [], fechaHoraRegistro: null, codigoEstacion: null };
     }
 
     rechazarEvento(estadoRechazado, fecha){
@@ -343,8 +348,9 @@ class Estado {
         return this.nombre === "BloqEnRevision";
     }
 
-    transicionaDeBloqEnRev() {
-        return this.nombre === "BloqEnRevision";
+    // falta en diag
+    esOpcionSeleccionada(op){
+        return this.nombre === op;
     }
 
     getNombre() {
@@ -459,12 +465,18 @@ class MuestraSismica {
 }
 
 class SerieTemporal {
-    constructor(muestrasSismicas = []) {
+    constructor(muestrasSismicas = [],fechaHoraRegistro , Sismografo) {
         this.muestrasSismicas = muestrasSismicas; // array de MuestraSismica
+        this.fechaHoraRegistro = fechaHoraRegistro;
+        this.Sismografo = Sismografo;
     }
 
     obtenerMuestras() {
-        return this.muestrasSismicas.map(muestra => muestra.obtenerDatos());
+        return {
+            muestras: this.muestrasSismicas.map(muestra => muestra.obtenerDatos()),
+            fechaHoraRegistro: this.fechaHoraRegistro,
+            codigoEstacion: this.Sismografo.sosDeSerieTemporal()
+        };
     }
 }
 
@@ -487,14 +499,15 @@ class EstacionSismologica {
 }
 
 class Sismografo {
-    constructor(fechaAdquisicion, identificadorSismografo, nroSerie) {
+    constructor(fechaAdquisicion, identificadorSismografo, nroSerie, EstacionSismologica) {
         this.fechaAdquisicion = fechaAdquisicion;
         this.identificadorSismografo = identificadorSismografo;
         this.nroSerie = nroSerie;
+        this.EstacionSismologica = EstacionSismologica;
     }
 
     sosDeSerieTemporal() {
-        return true; 
+        return this.EstacionSismologica.obtenerCodigoEstacion();
     }
 }
 
