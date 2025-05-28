@@ -29,9 +29,16 @@ function VisualizarMapa({ evento, show, onHide, gestor, onEstadoActualizado, han
 
   const handleSecondClose = () => setShowSecondModal(false);
 
-  const handleNoClick = () => {
-    onHide();
-    if (gestor.habilitarModificacionEvento()) setShowSecondModal(true);
+  const handleClick = (op) => {
+    if(op){
+      gestor.tomarSolicitud(op)
+      onHide();
+    }else{
+      onHide();
+      gestor.tomarSolicitud(op);
+      if (gestor.habilitarModificacionEvento()) setShowSecondModal(true);
+    }
+    
   };
 
   // Cuando rechazas la modificación (cerrar el segundo modal)
@@ -159,10 +166,10 @@ function VisualizarMapa({ evento, show, onHide, gestor, onEstadoActualizado, han
             </div>
           </Modal.Body>
           <Modal.Footer style={footerStyle}>
-            <Button style={btnDanger} onClick={handleNoClick}>
+            <Button style={btnDanger} onClick={() => handleClick(false)}>
               No
             </Button>
-            <Button style={btnPrimary} onClick={handleClose}>
+            <Button style={btnPrimary} onClick={() => handleClick(true)}>
               Sí
             </Button>
           </Modal.Footer>

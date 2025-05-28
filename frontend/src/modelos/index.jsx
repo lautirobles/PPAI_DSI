@@ -12,6 +12,7 @@ class GestorRevision{
         this.modifSeleccionada = null;
         this.accionSeleccionada = null;
         this.responsable = null;
+        this.visualizarMapa = null;
     }
 
     buscarEventosNoRevisados(){
@@ -79,8 +80,35 @@ class GestorRevision{
         };
     }
 
+    clasificarPorEstacion() {
+        // Asegura que haya datos y que sean un array
+        const series = Array.isArray(this.datosSismicosEventoSelec.muestras)
+            ? this.datosSismicosEventoSelec.muestras
+            : [this.datosSismicosEventoSelec.muestras];
+
+        // Agrupa por codigoEstacion
+        const agrupadas = {};
+        series.forEach(serie => {
+            const codigo = serie.codigoEstacion;
+            if (!agrupadas[codigo]) {
+                agrupadas[codigo] = [];
+            }
+            agrupadas[codigo].push(serie);
+        });
+
+        // Asigna el array de objetos agrupados al atributo
+        this.datosSismicosXEstacion = Object.entries(agrupadas).map(([codigoEstacion, series]) => ({
+        codigoEstacion,
+        series
+        }));
+    }
+
     habilitarOpcionVisualizarMapa(){
         return true;
+    }
+
+    tomarSolicitud(op){
+        this.visualizarMapa = op;
     }
 
     habilitarModificacionEvento(){
@@ -105,7 +133,6 @@ class GestorRevision{
         this.opSeleccionada = opcion;
     }
 
-    // falta en diagramas
     buscarOPSeleccionada(op){
         this.accionSeleccionada = this.estados.find(e => {
             e.esAmbitoEvSismico();
@@ -316,7 +343,7 @@ class OrigenDeGeneracion {
 }
 
 
-class AlcanceSismo{
+class AlcanceSismico{
     constructor(descripcion, nombre){
         this.descripcion = descripcion,
         this.nombre = nombre
@@ -346,7 +373,6 @@ class Estado {
         return this.nombre === "BloqEnRevision";
     }
 
-    // falta en diag
     esOpcionSeleccionada(op){
         return this.nombre === op;
     }
@@ -510,4 +536,4 @@ class Sismografo {
 }
 
 
-export { GestorRevision, EventoSismico, Estado, CambioEstado, Sismografo, EstacionSismologica, SerieTemporal, MuestraSismica, DetalleMuestraSismica, TipoDeDato, Responsable, Usuario, Sesion, AlcanceSismo, OrigenDeGeneracion, ClasificacionSismo}
+export { GestorRevision, EventoSismico, Estado, CambioEstado, Sismografo, EstacionSismologica, SerieTemporal, MuestraSismica, DetalleMuestraSismica, TipoDeDato, Responsable, Usuario, Sesion, AlcanceSismico as AlcanceSismo, OrigenDeGeneracion, ClasificacionSismo}
