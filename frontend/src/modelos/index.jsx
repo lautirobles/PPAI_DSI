@@ -1,5 +1,4 @@
 
-//  FALTA LA CONSISTENCIA EN EL DIAG DE CLASES
 class GestorRevision{
     constructor(estados, eventos, sesion){
         this.estados = estados;
@@ -101,7 +100,6 @@ class GestorRevision{
         return this.opciones;
     }
 
-    // FALTA BUSCAR EL ESTADO SELECCIONADO 
 
     tomarAccion(opcion){
         this.opSeleccionada = opcion;
