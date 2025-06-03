@@ -10,13 +10,15 @@ function RevisionManual() {
     const [eventos, setEventos] = useState([]);
     const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
     const [mostrarModal, setMostrarModal] = useState(false);
+    const [datos, setDatos] = useState([]);
+
 
     const handleRevisar = (eventoPlano) => {
         const eventoInstancia = gestor.eventos.find(
             ev => ev.fechaHoraOcurrencia === eventoPlano.fechaHoraOcurrencia
         );
         gestor.tomarSelecEvento(eventoInstancia);
-        gestor.buscarEstadoBloqEnRev();
+        setDatos(gestor.buscarEstadoBloqEnRev());
         if (gestor.habilitarOpcionVisualizarMapa()) {
             setEventoSeleccionado(eventoInstancia);
             setMostrarModal(true);
@@ -111,6 +113,7 @@ function RevisionManual() {
                     show={mostrarModal}
                     onHide={() => setMostrarModal(false)}
                     gestor={gestor}
+                    datos={datos}
                     onEstadoActualizado={handleEstadoActualizado}
                     finCU={() => {}}
                 />

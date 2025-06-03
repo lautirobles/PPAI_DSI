@@ -5,7 +5,7 @@ export class Sesion {
     this.usuario = usuario;
   }
   conocerUsuario() {
-    return this.usuario.conocerResponsable();
+    return this.usuario.conocerEmpleado();
   }
 }
 

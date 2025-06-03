@@ -6,7 +6,7 @@ export class Usuario {
         this.responsable = responsable;
     }
 
-    conocerResponsable() {
+    conocerEmpleado() {
         return this.responsable.getNombre();
     }
 }

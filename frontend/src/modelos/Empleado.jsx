@@ -1,4 +1,4 @@
-export class Responsable {
+export class Empleado {
     constructor(apellido, mail, nombre, telefono) {
         this.apellido = apellido;
         this.mail = mail;

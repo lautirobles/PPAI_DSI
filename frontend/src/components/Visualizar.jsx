@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
-function VisualizarMapa({ evento, show, onHide, gestor, onEstadoActualizado, handleFinCU }) {
+function VisualizarMapa({ evento, show, onHide, gestor, datos, onEstadoActualizado, handleFinCU }) {
   const [showSecondModal, setShowSecondModal] = useState(false);
   const [showThirdModal, setShowThirdModal] = useState(false);
 
   // Estados para campos modificables
   const [magnitud, setMagnitud] = useState('');
   const [alcance, setAlcance] = useState('');
+  const [clasificacion, setClasificacion] = useState('');
   const [origen, setOrigen] = useState('');
   const [mostrarFinCU, setMostrarFinCU] = useState(false);
 
@@ -17,10 +18,12 @@ function VisualizarMapa({ evento, show, onHide, gestor, onEstadoActualizado, han
 
   // Cargar datos del evento al iniciar
   useEffect(() => {
-    if (evento) {
+    if (evento && show) {
+      // const datos = gestor.buscarDatosSismicos();
       setMagnitud(evento.valorMagnitud || '');
-      setAlcance(evento.alcance.getNombre() || '');
-      setOrigen(evento.origenGeneracion.getNombre() || '');
+      setAlcance(datos.alcanceNombre || '');
+      setOrigen(datos.origenNombre || '');
+      setClasificacion(datos.clasificacionNombre || '')
     }
   }, [evento]);
 
@@ -53,7 +56,6 @@ function VisualizarMapa({ evento, show, onHide, gestor, onEstadoActualizado, han
 
   // Manejar selección de opción en tercer modal
   const handleOptionSelect = (option) => {
-    gestor.obtenerFechaYHoraActual();
     gestor.buscarOPSeleccionada(option);
     onEstadoActualizado();
     setShowThirdModal(false);
@@ -154,9 +156,9 @@ function VisualizarMapa({ evento, show, onHide, gestor, onEstadoActualizado, han
           </Modal.Header>
           <Modal.Body style={bodyStyle}>
             <div>
-              <p><b>Alcance:</b> {evento.alcance.getNombre()}</p>
-              <p><b>Clasificación:</b> {evento.clasificacion.getNombre()}</p>
-              <p><b>Origen:</b> {evento.origenGeneracion.getNombre()}</p>
+              <p><b>Alcance:</b> {alcance}</p>
+              <p><b>Clasificación:</b> {clasificacion}</p>
+              <p><b>Origen:</b> {origen}</p>
             </div>
             <hr style={{ borderColor: "#00e6ff", opacity: 0.2 }} />
             <div>

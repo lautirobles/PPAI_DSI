@@ -10,7 +10,7 @@ export class GestorRevision{
         this.opciones = ['Confirmar', 'Rechazar', 'Revision Experto'];
         this.modifSeleccionada = null;
         this.accionSeleccionada = null;
-        this.responsable = null;
+        this.empleado = null;
         this.visualizarMapa = null;
     }
 
@@ -43,14 +43,14 @@ export class GestorRevision{
             e.esAmbitoEvSismico();
             e.esBloqEnRevision();
         })
-        this.bloquearEvento();
+        return this.bloquearEvento();
     }
 
 
     bloquearEvento(){
-        this.obtenerFechaYHoraActual();
+        this.fechaHoraAct = this.obtenerFechaYHoraActual();
         this.eventoSelec.bloquearEvSismico(this.estadoBloq, this.fechaHoraAct);
-        this.buscarDatosSismicos();
+        return this.buscarDatosSismicos();
     }
 
 
@@ -153,19 +153,19 @@ export class GestorRevision{
         return tieneMagnitud && tieneAlcance && tieneOrigen && accionValida;
     }
 
-    buscarResponsable(){
-        this.responsable = this.sesion.conocerUsuario();
+    buscarEmpleado(){
+        this.empleado = this.sesion.conocerUsuario();
     }
 
     actualizarEstado(opcion){
-        let fecha = this.fechaHoraAct;
+        this.obtenerFechaYHoraActual()
         console.log(`el evento selec es: ${this.eventoSelec}`)
         if(opcion === 'Confirmar'){
-            this.eventoSelec.confirmarEvento(opcion, fecha);
+            this.eventoSelec.confirmarEvento(opcion, this.fechaHoraAct);
         }else if (opcion === 'Rechazar'){
-            this.eventoSelec.rechazarEvento(opcion, fecha);
+            this.eventoSelec.rechazarEvento(opcion, this.fechaHoraAct);
         }else if (opcion === 'Solicitar revision a experto'){
-            this.eventoSelec.revisionExperto(opcion, fecha);
+            this.eventoSelec.revisionExperto(opcion, this.fechaHoraAct);
         }
     }
 

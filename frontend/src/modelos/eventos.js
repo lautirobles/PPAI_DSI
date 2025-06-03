@@ -8,17 +8,17 @@ import {
   MuestraSismica,
   DetalleMuestraSismica,
   TipoDeDato,
-  Responsable,
+  Empleado,
   Usuario,
   Sesion,
-  AlcanceSismo,
+  AlcanceSismico,
   OrigenDeGeneracion,
   ClasificacionSismo
 } from './index.jsx';
 
 
-const responsable = new Responsable("García", "juan.garcia@mail.com", "Juan", "3511234567");
-const usuario = new Usuario("jgarcia", "1234", "juan.garcia@mail.com", responsable);
+const empleado = new Empleado("García", "juan.garcia@mail.com", "Juan", "3511234567");
+const usuario = new Usuario("jgarcia", "1234", "juan.garcia@mail.com", empleado);
 const sesion = new Sesion("2024-05-25 08:00", null, usuario);
 
 const tipoDatoMagnitud = new TipoDeDato("Magnitud", "Richter", 6.0);
@@ -64,7 +64,7 @@ const serieTemporal3 = new SerieTemporal([muestra6, muestra7, muestra8, muestra9
 
 const clasificacion = new ClasificacionSismo(0, 70, "Superficial");
 const origen = new OrigenDeGeneracion("Generado en un volcan", "Volcánico");
-const alcance = new AlcanceSismo("Afecta zona urbana", "Local");
+const alcance = new AlcanceSismico("Afecta zona urbana", "Local");
 
 const estados = [
     new Estado("AutoDetectado", "EvSismico"),

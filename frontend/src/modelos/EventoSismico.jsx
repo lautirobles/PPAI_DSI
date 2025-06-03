@@ -1,3 +1,6 @@
+import { Estado } from './Estado';
+import { CambioEstado } from './CambioEstado';
+
 export class EventoSismico {
     constructor(fechaHoraFin, fechaHoraOcurrencia, latitudEpicentro, longitudEpicentro, latitudHipocentro, longitudHipocentro, valorMagnitud, serieTemporal, clasificacion, magnitud, origenGeneracion, alcance, estadoActual, cambioEstado){
         this.fechaHoraFin = fechaHoraFin,
@@ -22,16 +25,14 @@ export class EventoSismico {
 
     obtenerDatosEvento(){
         return {
-            id: this.fechaHoraOcurrencia,
+            // cambiar lo del id
+            id: this.fechaHoraOcurrencia, 
             fechaHoraOcurrencia: this.getFechaHoraOcurrencia(),
             latitudEpicentro: this.getLatEpi(),
             longitudEpicentro: this.getLonEpi(),
             latitudHipocentro: this.getLatHipo(),
             longitudHipocentro: this.getLonHipo(),
-            valorMagnitud: this.getValorMagnitud(),
-            alcance: this.alcance,
-            clasificacion: this.clasificacion,
-            origenGeneracion: this.origenGeneracion
+            valorMagnitud: this.getValorMagnitud()
         };
     }
 
@@ -103,9 +104,15 @@ export class EventoSismico {
     }
 
     buscarDatosSismicos() {
-        return this.serieTemporal
+        const datosSerie = this.serieTemporal
         ? this.serieTemporal.obtenerMuestras()
-        : { muestras: [], fechaHoraRegistro: null, codigoEstacion: null };
+        : { muestras: [], fechaHoraRegistro: null, codigoEstacion: null }
+        return{
+            ...datosSerie,
+            alcanceNombre: this.alcance.getNombre(),
+            origenNombre: this.origenGeneracion.getNombre(),
+            clasificacionNombre: this.clasificacion.getNombre()
+        };
     }
 
     rechazarEvento(estadoRechazado, fecha){

@@ -8,7 +8,7 @@ import { SerieTemporal } from './SerieTemporal';
 import { MuestraSismica } from './MuestraSismica';
 import { DetalleMuestraSismica } from './DetalleMuestraSismica';
 import { TipoDeDato } from './TipoDeDato';
-import { Responsable } from './Responsable';
+import { Empleado } from './Empleado';
 import { Usuario } from './Usuario';
 import { Sesion } from './Sesion';
 import { AlcanceSismico } from './AlcanceSismico';
@@ -16,4 +16,4 @@ import { OrigenDeGeneracion } from './OrigenDeGeneracion';
 import { ClasificacionSismo } from './ClasificacionSismo';
 
 
-export { GestorRevision, EventoSismico, Estado, CambioEstado, Sismografo, EstacionSismologica, SerieTemporal, MuestraSismica, DetalleMuestraSismica, TipoDeDato, Responsable, Usuario, Sesion, AlcanceSismico, OrigenDeGeneracion, ClasificacionSismo};
+export { GestorRevision, EventoSismico, Estado, CambioEstado, Sismografo, EstacionSismologica, SerieTemporal, MuestraSismica, DetalleMuestraSismica, TipoDeDato, Empleado, Usuario, Sesion, AlcanceSismico, OrigenDeGeneracion, ClasificacionSismo};
