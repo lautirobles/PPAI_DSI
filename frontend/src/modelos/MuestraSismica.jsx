@@ -1,4 +1,4 @@
-export class MuestraSismica {
+export  class MuestraSismica {
     constructor(fechaHoraMuestra, detallesMuestraSismica = []) {
         this.fechaHoraMuestra = fechaHoraMuestra;
         this.detallesMuestraSismica = detallesMuestraSismica; // array de DetalleMuestraSismica

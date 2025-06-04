@@ -163,7 +163,7 @@ export class GestorRevision{
     }
 
     actualizarEstado(opcion){
-        this.obtenerFechaYHoraActual()
+        this.obtenerFechaYHoraActual();
         if(opcion === 'Confirmar'){
             this.eventoSelec.confirmarEvento(this.accionSeleccionada, this.fechaHoraAct);
         }else if (opcion === 'Rechazar'){

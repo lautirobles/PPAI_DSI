@@ -4,9 +4,10 @@ export class SerieTemporal {
         this.fechaHoraRegistro = fechaHoraRegistro;
     }
 
+    // DEPENDENCIA CON SISMOGRAFO
     obtenerMuestras(sismografos) {
         const muestras = this.muestrasSismicas.map(muestra => muestra.obtenerDatos());
-
+        
         const codigo = sismografos.find(sismografo => 
             sismografo.sosDeSerieTemporal(this) !== null
         )?.sosDeSerieTemporal(this) || null;
