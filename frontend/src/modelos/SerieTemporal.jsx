@@ -4,11 +4,17 @@ export class SerieTemporal {
         this.fechaHoraRegistro = fechaHoraRegistro;
     }
 
-    obtenerMuestras() {
+    obtenerMuestras(sismografos) {
+        const muestras = this.muestrasSismicas.map(muestra => muestra.obtenerDatos());
+
+        const codigo = sismografos.map(sismografo =>{
+            return sismografo.sosDeSerieTemporal(this);
+        })
+
         return {
-            muestras: this.muestrasSismicas.map(muestra => muestra.obtenerDatos()),
+            muestras: muestras,
             fechaHoraRegistro: this.fechaHoraRegistro,
-            codigoEstacion: null
+            codigoEstacion: codigo
         };
     }
 }
