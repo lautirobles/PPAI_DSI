@@ -1,5 +1,5 @@
 export class GestorRevision{
-    constructor(estados, eventos, sesion){
+    constructor(estados, eventos, sesion, sismografos){
         this.estados = estados;
         this.estadoBloq = null;
         this.sesion = sesion;
@@ -7,11 +7,12 @@ export class GestorRevision{
         this.eventoSelec = null;
         this.fechaHoraAct = null;
         this.datosSismicosEventoSelec = null;
-        this.opciones = ['Confirmar', 'Rechazar', 'Revision Experto'];
+        this.opciones = ['Confirmar', 'Rechazar', 'Solicitar revision a experto'];
         this.modifSeleccionada = null;
         this.accionSeleccionada = null;
         this.empleado = null;
         this.visualizarMapa = null;
+        this.sismografos = sismografos;
     }
 
     buscarEventosNoRevisados(){
@@ -60,7 +61,7 @@ export class GestorRevision{
             throw new Error("No hay evento seleccionado");
         }
         // Obtiene los datos sismicos del evento seleccionado
-        this.datosSismicosEventoSelec = this.eventoSelec.buscarDatosSismicos();
+        this.datosSismicosEventoSelec = this.eventoSelec.buscarDatosSismicos(this.sismografos);
 
         // Formatea las muestras para que sean legibles
         const muestrasLegibles = (this.datosSismicosEventoSelec.muestras || []).map(muestra => {
@@ -133,10 +134,11 @@ export class GestorRevision{
     }
 
     buscarOPSeleccionada(op){
-        this.accionSeleccionada = this.estados.find(e => {
-            e.esAmbitoEvSismico();
-            e.esOpcionSeleccionada(op);
-        })
+        this.accionSeleccionada = this.estados.find(e => 
+            e.esAmbitoEvSismico() && e.esOpcionSeleccionada(op)
+        )
+        console.log('accionSeleccionada:', JSON.stringify(this.accionSeleccionada, null, 2));
+        this.validarDatosEv();
     }
 
     validarDatosEv() {
@@ -159,19 +161,18 @@ export class GestorRevision{
 
     actualizarEstado(opcion){
         this.obtenerFechaYHoraActual()
-        console.log(`el evento selec es: ${this.eventoSelec}`)
         if(opcion === 'Confirmar'){
-            this.eventoSelec.confirmarEvento(opcion, this.fechaHoraAct);
+            this.eventoSelec.confirmarEvento(this.accionSeleccionada, this.fechaHoraAct);
         }else if (opcion === 'Rechazar'){
-            this.eventoSelec.rechazarEvento(opcion, this.fechaHoraAct);
+            this.eventoSelec.rechazarEvento(this.accionSeleccionada, this.fechaHoraAct);
         }else if (opcion === 'Solicitar revision a experto'){
-            this.eventoSelec.revisionExperto(opcion, this.fechaHoraAct);
+            this.eventoSelec.revisionExperto(this.accionSeleccionada, this.fechaHoraAct);
         }
     }
 
 
     finCU() {
-        // Aquí podrías limpiar datos, resetear estados, etc.
+        // Aquí podras limpiar datos, resetear estados, etc.
         // Por ejemplo:
         this.eventoSelec = null;
         this.datosSismicosEventoSelec = null;

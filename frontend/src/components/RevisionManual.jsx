@@ -1,7 +1,6 @@
 import { estados, eventosEjemplo, sesion } from '../modelos/eventos'; 
 import { GestorRevision } from '../modelos/index';
 import { useEffect, useState, useRef } from 'react';
-import React from 'react'
 import VisualizarMapa from './Visualizar';
 
 function RevisionManual() {

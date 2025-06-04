@@ -1,4 +1,3 @@
-import { Estado } from './Estado';
 import { CambioEstado } from './CambioEstado';
 
 export class EventoSismico {
@@ -19,14 +18,12 @@ export class EventoSismico {
         this.cambioEstado = cambioEstado
     }
 
-    esAutoDetectado(){    
-        return this.estadoActual.getNombre() === 'AutoDetectado';
+    esAutoDetectado(){
+        return this.estadoActual.esAutoDetectado();
     }
 
     obtenerDatosEvento(){
         return {
-            // cambiar lo del id
-            id: this.fechaHoraOcurrencia, 
             fechaHoraOcurrencia: this.getFechaHoraOcurrencia(),
             latitudEpicentro: this.getLatEpi(),
             longitudEpicentro: this.getLonEpi(),
@@ -63,12 +60,12 @@ export class EventoSismico {
     bloquearEvSismico(estadoBloq, fecha){
         this.setEstadoActual(estadoBloq);
         this.buscarCEAct(fecha);
-        this.crearCE(estadoBloq, fecha);
+        this.crearCE(estadoBloq, fecha, null);
 
     }
     
     setEstadoActual(estado){
-        this.estadoActual = new Estado(estado);
+        this.estadoActual = estado;
     }
 
     buscarCEAct(fechaFin){
@@ -89,8 +86,8 @@ export class EventoSismico {
         return null;
     }
 
-    crearCE(estado, fecha){
-        const nuevoEstado = new CambioEstado(fecha, null, estado);
+    crearCE(estado, fecha, empleado){
+        const nuevoEstado = new CambioEstado(fecha, null, empleado, estado);
         // Si el evento ya tiene un array de cambioEstado, lo agregás:
         if (Array.isArray(this.cambioEstado)) {
             this.cambioEstado.push(nuevoEstado);
@@ -103,39 +100,42 @@ export class EventoSismico {
         }
     }
 
-    buscarDatosSismicos() {
+    buscarDatosSismicos(sismografos) {
+        let alcance = this.alcance.getNombre();
+        let origen = this.origenGeneracion.getNombre();
+        let clasificacion = this.clasificacion.getNombre();
         const datosSerie = this.serieTemporal
-        ? this.serieTemporal.obtenerMuestras()
+        ? this.serieTemporal.obtenerMuestras(sismografos)
         : { muestras: [], fechaHoraRegistro: null, codigoEstacion: null }
         return{
             ...datosSerie,
-            alcanceNombre: this.alcance.getNombre(),
-            origenNombre: this.origenGeneracion.getNombre(),
-            clasificacionNombre: this.clasificacion.getNombre()
+            alcanceNombre: alcance,
+            origenNombre: origen,
+            clasificacionNombre: clasificacion 
         };
     }
 
     rechazarEvento(estadoRechazado, fecha){
         this.setEstadoActual(estadoRechazado);
         this.buscarCEAct(fecha);
-        this.crearCE(estadoRechazado, fecha);
-        console.log(`El estado actual es ${this.estadoActual}`);
+        this.crearCE(estadoRechazado, fecha, this.empleado);
+        // console.log(`El estado actual es ${this.estadoActual}`);
     }
 
     // FLUJO ALTERNATIVO 1
     confirmarEvento(estadoConfirmado, fecha){
         this.setEstadoActual(estadoConfirmado);
         this.buscarCEAct(fecha);
-        this.crearCE(estadoConfirmado, fecha);
-        console.log(`El estado actual es ${this.estadoActual}`);
+        this.crearCE(estadoConfirmado, fecha, this.empleado);
+        // console.log(`El estado actual es ${this.estadoActual}`);
     }
 
     // FLUJO ALTERNATIVO 2
     revisionExperto(estadoRevision, fecha){
         this.setEstadoActual(estadoRevision);
         this.buscarCEAct(fecha);
-        this.crearCE(estadoRevision, fecha);
-        console.log(`El estado actual es ${this.estadoActual}`);
+        this.crearCE(estadoRevision, fecha, this.empleado);
+        // console.log(`El estado actual es ${this.estadoActual}`);
     }
 
 }

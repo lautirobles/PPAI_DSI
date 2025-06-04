@@ -17,7 +17,14 @@ export class Estado {
     }
 
     esOpcionSeleccionada(op){
-        return this.nombre === op;
+        if(op === "Confirmar"){
+            console.log(this.nombre === "Confirmado")
+            return this.nombre === "Confirmado";
+        } else if(op === "Rechazar"){
+            return this.nombre === "Rechazado";
+        }else if(op === "Solicitar revision a experto"){
+            return this.nombre === "Revision Experto"
+        }
     }
 
     getNombre() {

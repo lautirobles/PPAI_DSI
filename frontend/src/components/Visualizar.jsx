@@ -57,6 +57,8 @@ function VisualizarMapa({ evento, show, onHide, gestor, datos, onEstadoActualiza
   // Manejar selección de opción en tercer modal
   const handleOptionSelect = (option) => {
     gestor.buscarOPSeleccionada(option);
+    gestor.buscarEmpleado();
+    gestor.actualizarEstado(option);
     onEstadoActualizado();
     setShowThirdModal(false);
     setMostrarFinCU(true);
@@ -239,7 +241,7 @@ function VisualizarMapa({ evento, show, onHide, gestor, datos, onEstadoActualiza
           </Modal.Body>
           <Modal.Footer style={footerStyle}>
             <Button style={btnSecondary} onClick={() => handleModificacion(false)}>
-              Rechazar
+              No Modificar
             </Button>
             <Button style={btnPrimary} onClick={() => handleModificacion(true)}>
               Modificar
