@@ -18,7 +18,6 @@ export class Estado {
 
     esOpcionSeleccionada(op){
         if(op === "Confirmar"){
-            console.log(this.nombre === "Confirmado")
             return this.nombre === "Confirmado";
         } else if(op === "Rechazar"){
             return this.nombre === "Rechazado";

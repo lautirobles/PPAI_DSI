@@ -1,10 +1,10 @@
-import { estados, eventosEjemplo, sesion } from '../modelos/eventos'; 
+import { estados, eventosEjemplo, sesion, sismografos } from '../modelos/eventos'; 
 import { GestorRevision } from '../modelos/index';
 import { useEffect, useState, useRef } from 'react';
 import VisualizarMapa from './Visualizar';
 
 function RevisionManual() {
-    const gestorRef = useRef(new GestorRevision(estados, eventosEjemplo, sesion));
+    const gestorRef = useRef(new GestorRevision(estados, eventosEjemplo, sesion, sismografos));
     const gestor = gestorRef.current;
     const [eventos, setEventos] = useState([]);
     const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
@@ -18,6 +18,7 @@ function RevisionManual() {
         );
         gestor.tomarSelecEvento(eventoInstancia);
         setDatos(gestor.buscarEstadoBloqEnRev());
+        gestor.clasificarPorEstacion();
         if (gestor.habilitarOpcionVisualizarMapa()) {
             setEventoSeleccionado(eventoInstancia);
             setMostrarModal(true);

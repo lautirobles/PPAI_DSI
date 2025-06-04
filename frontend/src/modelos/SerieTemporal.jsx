@@ -7,9 +7,10 @@ export class SerieTemporal {
     obtenerMuestras(sismografos) {
         const muestras = this.muestrasSismicas.map(muestra => muestra.obtenerDatos());
 
-        const codigo = sismografos.map(sismografo =>{
-            return sismografo.sosDeSerieTemporal(this);
-        })
+        const codigo = sismografos.find(sismografo => 
+            sismografo.sosDeSerieTemporal(this) !== null
+        )?.sosDeSerieTemporal(this) || null;
+
 
         return {
             muestras: muestras,

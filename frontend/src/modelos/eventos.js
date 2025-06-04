@@ -53,12 +53,21 @@ const muestra23 = new MuestraSismica("2022-08-27 04:25", [detalleMagnitud, detal
 const muestra24 = new MuestraSismica("2023-01-05 19:15", [detalleMagnitud, detalleProfundidad]); 
 const muestra25 = new MuestraSismica("2025-06-11 23:50", [detalleMagnitud, detalleProfundidad]);
 
-const estacion = new EstacionSismologica("EST001", "DOC123", "2024-05-20", -31.4, -64.2, "Estación Central", "CERT001");
-const sismografo = new Sismografo("2022-01-01", "SISMO001", "SN12345", estacion);
+const estacion1 = new EstacionSismologica("EST001", "DOC123", "2024-05-20", -31.4, -64.2, "Estación Central", "CERT001");
+const estacion2 = new EstacionSismologica("EST002", "DOC456", "2022-05-18", -35.0, -66.6, "Estación Sur", "CERT002");
 
-const serieTemporal = new SerieTemporal([muestra1, muestra2], "2020-01-01", sismografo);
-const serieTemporal2 = new SerieTemporal([muestra3, muestra4, muestra5], "2021-11-07", sismografo);
-const serieTemporal3 = new SerieTemporal([muestra6, muestra7, muestra8, muestra9, muestra10, muestra11, muestra12, muestra13, muestra14, muestra15, muestra16, muestra17, muestra18, muestra19, muestra20, muestra21, muestra22, muestra23], "2022-03-07", sismografo);
+
+
+const serieTemporal = new SerieTemporal([muestra1, muestra2], "2020-01-01");
+const serieTemporal2 = new SerieTemporal([muestra3, muestra4, muestra5], "2021-11-07");
+const serieTemporal3 = new SerieTemporal([muestra6, muestra7, muestra8, muestra9, muestra10, muestra11, muestra12, muestra13, muestra14, muestra15, muestra16, muestra17, muestra18, muestra19, muestra20, muestra21, muestra22, muestra23], "2022-03-07");
+
+
+const sismografos= [
+  new Sismografo("2022-01-01", "SISMO001", "SN12345", estacion1, [serieTemporal]),
+  new Sismografo("2022-02-01", "SISMO002", "SN67", estacion2, [serieTemporal2]),
+  new Sismografo("2022-03-01", "SISMO003", "SN89", estacion1, [serieTemporal3])
+]
 
 
 
@@ -106,4 +115,4 @@ const eventosEjemplo = [
   new EventoSismico("2025-06-11 00:00", "2025-06-11 23:50", -31.9, -64.6, -32.7, -65.4, 7.0, serieTemporal3, clasificacion, 7.0, origen, alcance, estados[1], cambioEstado2)
 ];
 
-export { estados, eventosEjemplo, sesion }
+export { estados, eventosEjemplo, sesion, sismografos }

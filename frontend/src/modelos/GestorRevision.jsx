@@ -61,6 +61,7 @@ export class GestorRevision{
             throw new Error("No hay evento seleccionado");
         }
         // Obtiene los datos sismicos del evento seleccionado
+        console.log(this.sismografos);
         this.datosSismicosEventoSelec = this.eventoSelec.buscarDatosSismicos(this.sismografos);
 
         // Formatea las muestras para que sean legibles
@@ -101,6 +102,8 @@ export class GestorRevision{
         codigoEstacion,
         series
         }));
+
+        console.log('Los datos:', JSON.stringify(this.datosSismicosEventoSelec, null, 2));
     }
 
     habilitarOpcionVisualizarMapa(){
